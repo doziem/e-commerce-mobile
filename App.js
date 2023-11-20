@@ -1,8 +1,10 @@
 import { useCallback } from 'react'
-import { StyleSheet } from 'react-native';
 import StackNavigator from './navigations/StackNavigator';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { Provider } from 'react-redux';
+import store from './store';
+import { ModalPortal } from 'react-native-modals';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -27,16 +29,10 @@ export default function App() {
 
   return (
     <>
-      <StackNavigator />
+      <Provider store={store}>
+        <StackNavigator onLayout={onLayoutRootView} />
+        <ModalPortal />
+      </Provider>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

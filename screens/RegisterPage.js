@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react'
 import {
+    Alert,
     Image,
     KeyboardAvoidingView,
     Pressable,
@@ -15,6 +16,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 
 const RegisterPage = () => {
@@ -22,6 +24,29 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState("")
+
+    const handleRegister = async () => {
+        const user = { name, email, password }
+
+        try {
+            const result = await axios.post("http://192.168.43.110:8000/register", user)
+
+            if (result) {
+                Alert.alert("User Registered Successfully", "Your have Registered Successfully")
+                setName("")
+                setEmail("")
+                setPassword("")
+
+            }
+        } catch (error) {
+            Alert.alert("Error Registering User", "Registeration Error")
+            console.log("Error Registering User", error?.message);
+            setName("")
+            setEmail("")
+            setPassword("")
+
+        }
+    }
     return (
         <SafeAreaView
             style={{
@@ -163,6 +188,7 @@ const RegisterPage = () => {
                 </View>
                 <View style={{ marginTop: 80 }}>
                     <Pressable
+                        onPress={handleRegister}
                         style={{
                             width: 200,
                             backgroundColor: '#febe18',
@@ -183,7 +209,7 @@ const RegisterPage = () => {
                             Rgister
                         </Text>
                     </Pressable>
-                    <Pressable onPress={() => navigation.navigate("Login")} style={{ marginTop: 15 }}>
+                    <Pressable onPress={() => navigation.goBack()} style={{ marginTop: 15 }}>
                         <Text style={{ textAlign: 'center', color: 'gray', fontSize: 16 }}>Already have an Acount? Login</Text>
                     </Pressable>
                 </View>
