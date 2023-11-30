@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, Platform, ScrollView, Pressable, TextInput, Image } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,14 +12,17 @@ import ProductItem from '../components/ProductItem';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useSelector } from 'react-redux';
 import { BottomModal, ModalContent, SlideAnimation } from 'react-native-modals';
+import { UserType } from '../UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { jwtDecode } from 'jwt-decode';
 
 const HomePage = () => {
     const navigation = useNavigation()
     const [products, setProducts] = useState([])
     const [open, setOpen] = useState(false);
-    // const [addresses, setAddresses] = useState([]);
+    const [addresses, setAddresses] = useState([]);
     const [category, setCategory] = useState("");
-    // const { userId, setUserId } = useContext(UserType);
+    const { userId, setUserId } = useContext(UserType);
     // const [selectedAddress,setSelectedAdress] = useState("");
     // console.log(selectedAddress)
     const [modalVisible, setModalVisible] = useState(false)
@@ -213,6 +216,8 @@ const HomePage = () => {
         fetchData()
     }, [])
 
+    console.log("Product:::", products);
+
     const onGenderOpen = useCallback(() => {
         setCompanyOpen(false);
     }, []);
@@ -224,6 +229,31 @@ const HomePage = () => {
         navigation.navigate("Address")
 
     }
+
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const token = await AsyncStorage.getItem("authtoken");
+
+            const decodeToken = jwtDecode(token)
+            const userId = decodeToken.userId
+            setUserId(userId)
+        }
+        fetchUser()
+    }, [])
+
+    useEffect(() => {
+        if (userId) {
+            fetchAddresses()
+        }
+    }, [userId, modalVisible])
+
+    const fetchAddresses = async () => {
+        const res = await axios.get(`http://192.168.43.110:8000/addresses/${userId}`);
+
+        setAddresses(res.data)
+    }
+
 
     return (
         <>
@@ -416,7 +446,7 @@ const HomePage = () => {
 
                         <Pressable
                             onPress={handleOpenAddress}
-                            style={{ width: 140, aspectRatio: 1, borderColor: '#d0d0d0', borderWidth: 1, marginTop: 10, padding: 10, justifyContent: 'center', alignItems: 'center' }}
+                            style={{ width: 140, aspectRatio: 1, borderColor: '#d0d0d0', borderWidth: 1, marginTop: 10, padding: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}
                         >
                             <Text style={{ textAlign: 'center', color: '#0066bc', fontWeight: 'semibold' }}>Add an Address or pick-up point</Text>
                         </Pressable>
@@ -428,14 +458,14 @@ const HomePage = () => {
                             <Text style={{ color: '#0066bc' }}>Enter Your Postal code</Text>
                         </View>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                            <Ionicons name='location-sharp' size={24} color='#0066bc' />
-                            <Text style={{ color: '#0066bc' }}>Enter Your Postal code</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+                            <Ionicons name="locate-sharp" size={24} color="#0066bc" />
+                            <Text style={{ color: '#0066bc' }}>Use My Current Location</Text>
                         </View>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
                             <AntDesign name='earth' size={24} color='#fcd500' />
-                            <Text style={{ color: '#0066bc' }}>Enter Your Postal code</Text>
+                            <Text style={{ color: '#0066bc' }}>Delivered Outside Nigeria</Text>
                         </View>
                     </View>
                 </ModalContent>

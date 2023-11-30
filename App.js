@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import store from './store';
 import { ModalPortal } from 'react-native-modals';
+import { UserContext } from './UserContext';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -30,8 +31,10 @@ export default function App() {
   return (
     <>
       <Provider store={store}>
-        <StackNavigator onLayout={onLayoutRootView} />
-        <ModalPortal />
+        <UserContext>
+          <StackNavigator onLayout={onLayoutRootView} />
+          <ModalPortal />
+        </UserContext>
       </Provider>
     </>
   );

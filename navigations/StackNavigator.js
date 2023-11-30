@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import ProductInfoPage from '../screens/ProductInfoPage'
 import CreateAddressPage from '../screens/CreateAddressPage'
+import AddressPage from '../screens/AddressPage'
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -79,6 +80,7 @@ const StackNavigator = () => {
                 <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
                 <Stack.Screen name="Info" component={ProductInfoPage} options={{ headerShown: false }} />
                 <Stack.Screen name="Address" component={CreateAddressPage} options={{ headerShown: false }} />
+                <Stack.Screen name="Add" component={AddressPage} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     )
