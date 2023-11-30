@@ -14,6 +14,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import ProductInfoPage from '../screens/ProductInfoPage'
 import CreateAddressPage from '../screens/CreateAddressPage'
 import AddressPage from '../screens/AddressPage'
+import CartPage from '../screens/CartPage'
+import ProfilePage from '../screens/ProfilePage'
 
 const StackNavigator = () => {
     const Stack = createNativeStackNavigator();
@@ -40,7 +42,7 @@ const StackNavigator = () => {
 
                 <Tab.Screen
                     name="Profile"
-                    component={HomePage}
+                    component={ProfilePage}
                     options={{
                         tabBarLabel: "Profile",
                         tabBarLabelStyle: { color: "#008E97" },
@@ -55,7 +57,7 @@ const StackNavigator = () => {
 
                 <Tab.Screen
                     name="Cart"
-                    component={HomePage}
+                    component={CartPage}
                     options={{
                         tabBarLabel: "Cart",
                         tabBarLabelStyle: { color: "#008E97" },

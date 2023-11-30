@@ -23,8 +23,8 @@ const HomePage = () => {
     const [addresses, setAddresses] = useState([]);
     const [category, setCategory] = useState("");
     const { userId, setUserId } = useContext(UserType);
-    // const [selectedAddress,setSelectedAdress] = useState("");
-    // console.log(selectedAddress)
+    const [selectedAddress, setSelectedAdress] = useState("");
+    console.log(selectedAddress)
     const [modalVisible, setModalVisible] = useState(false)
     const [items, setItems] = useState([
         { label: "choose category", value: "" },
@@ -216,8 +216,6 @@ const HomePage = () => {
         fetchData()
     }, [])
 
-    console.log("Product:::", products);
-
     const onGenderOpen = useCallback(() => {
         setCompanyOpen(false);
     }, []);
@@ -254,7 +252,6 @@ const HomePage = () => {
         setAddresses(res.data)
     }
 
-
     return (
         <>
             <SafeAreaView style={{ paddingTop: Platform.OS === "android" ? 40 : 0, flex: 1, backgroundColor: '#fff' }}>
@@ -271,7 +268,13 @@ const HomePage = () => {
                         style={{ flexDirection: 'row', alignItems: 'center', gap: 5, padding: 10, backgroundColor: '#afeeee' }}>
                         <Ionicons name="location-outline" size={24} color="black" />
                         <Pressable >
-                            <Text style={{ fontSize: 13, fontFamily: 'medium' }}>Deliver To Ken-Nigeria, work's Road</Text>
+                            {selectedAddress ? (
+                                <Text style={{ fontSize: 13, fontFamily: 'medium' }}>{selectedAddress?.name}-{selectedAddress?.street} </Text>
+
+                            ) : (
+
+                                <Text style={{ fontSize: 13, fontFamily: 'medium' }}>Add New Address</Text>
+                            )}
                         </Pressable>
                         <MaterialIcons name="keyboard-arrow-down" size={24} color="black" />
                     </Pressable>
@@ -443,6 +446,34 @@ const HomePage = () => {
                             options</Text>
                     </View>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                        {addresses?.map((item, i) => (
+
+                            <Pressable
+                                key={i}
+                                onPress={() => setSelectedAdress(item)}
+                                style={{
+                                    width: 140,
+                                    aspectRatio: 1,
+                                    borderColor: '#d0d0d0',
+                                    borderWidth: 1,
+                                    marginTop: 10,
+                                    padding: 10,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: 10,
+                                    marginRight: 15,
+                                    backgroundColor: selectedAddress === item ? "#fbcbb1" : "#fff"
+                                }}
+                            >
+                                <Text style={{ fontSize: 13, fontWeight: 'bold' }}>{item?.name} </Text>
+                                {/* </View> */}
+                                <Text numberOfLines={1} style={{ fontSize: 13, textAlign: 'center', width: 130 }}>{item?.houseNo}, {item?.street} </Text>
+                                <Text numberOfLines={1} style={{ fontSize: 13, textAlign: 'center', width: 130 }}> {item?.landMark} </Text>
+                                <Text numberOfLines={1} style={{ fontSize: 13, textAlign: 'center', width: 130 }}>Enug, Nigeria </Text>
+                                <Entypo name="location-pin" size={24} color="red" style={{ marginTop: 10 }} />
+
+                            </Pressable>
+                        ))}
 
                         <Pressable
                             onPress={handleOpenAddress}
@@ -450,7 +481,6 @@ const HomePage = () => {
                         >
                             <Text style={{ textAlign: 'center', color: '#0066bc', fontWeight: 'semibold' }}>Add an Address or pick-up point</Text>
                         </Pressable>
-
                     </ScrollView>
                     <View style={{ flexDirection: 'column', gap: 7, marginBottom: 30 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
