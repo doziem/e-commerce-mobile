@@ -15,7 +15,7 @@ const ProductItem = ({ item }) => {
         setTimeout(() => {
             setAddedToCart(false)
 
-        }, 60000)
+        }, 6000)
     }
 
     return (

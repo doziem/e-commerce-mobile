@@ -23,10 +23,9 @@ app.listen(process.env.PORT, () => console.log("App running"))
 
 
 const User = require('./models/user')
-const Order = require('./models/order')
+const Order = require('./models/order');
 
 // send verify email
-
 const sendVerificationEmail = async (email, verifyToken) => {
 
     const transporter = nodemailer.createTransport({
@@ -185,5 +184,88 @@ app.get("/addresses/:userId", async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error Retrievinf Address' })
 
+    }
+})
+
+// Create Order for user
+
+app.post("/order", async (req, res) => {
+    try {
+        const { userId, cartItems, totalPrice, shippingAddress, paymentMethod } = req.body;
+
+        const user = await User.findById(userId)
+
+        if (!user) {
+            return res.status(404).json({ message: "User not Found" })
+        }
+
+        // Create an Array of Products from cart items
+
+        const products = cartItems.map((item) => ({
+            name: item?.title,
+            quantity: item?.quantity,
+            price: item?.price,
+            image: item?.image
+
+        }));
+
+        // Create new Order
+
+        const order = new Order({
+            user: userId,
+            products,
+            totalPrice,
+            shippingAddress,
+            paymentMethod
+        })
+
+        const createdOrder = await order.save()
+
+        res.status(201).json({ order: createdOrder })
+        // mongoose.disconnect();
+    } catch (error) {
+        // console.log("Error creating Order", error);
+        res.status(500).json({ message: "Error creating Order" })
+    }
+})
+
+// User profile
+
+app.get("/profile/:userId", async (req, res) => {
+    try {
+
+        const userId = req.params.userId;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: "User not Found" })
+        }
+
+        res.status(200).json({ user })
+    } catch (error) {
+        console.log("Error creating Order", error);
+        res.status(500).json({ message: "Error retrieving user profile" })
+    }
+});
+
+
+app.get("/order/:userId", async (req, res) => {
+    try {
+
+        const userId = req.params.userId;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ message: "User not Found" })
+        }
+        const orders = Order.find({ user: userId }).populate('user')
+        if (!orders || orders?.length === 0) {
+            res.status(404).json({ message: "No order Found for the User" })
+        }
+
+        res.status(200).json({ orders })
+    } catch (error) {
+        console.log("Error creating Order", error);
+        res.status(500).json({ message: "Error retrieving user order" })
     }
 })

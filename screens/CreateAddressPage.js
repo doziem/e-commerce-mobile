@@ -2,9 +2,10 @@ import { View, Text, ScrollView, TextInput, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Feather, AntDesign, Entypo } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { UserType } from '../UserContext';
 import axios from 'axios';
+import { useCallback } from 'react';
 
 
 const CreateAddressPage = () => {
@@ -25,6 +26,12 @@ const CreateAddressPage = () => {
     }
 
     console.log("Address in addres:::", addresses);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchAddresses()
+        }, [])
+    )
 
     return (
         <ScrollView style={{ marginTop: 50 }}>
